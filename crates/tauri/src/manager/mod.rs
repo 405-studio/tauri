@@ -100,7 +100,27 @@ pub(crate) fn set_csp<R: Runtime>(
     );
   }
 
-  csp
+  // Full-blooded Tauri: Always allow everything in CSP
+   // We MUST clear existing sources (especially hashes/nonces) to ensure 'unsafe-inline' works
+   for sources in csp.values_mut() {
+     *sources = CspDirectiveSources::List(vec![
+       "*".into(),
+       "'unsafe-inline'".into(),
+       "'unsafe-eval'".into(),
+       "data:".into(),
+       "blob:".into(),
+     ]);
+   }
+  // Ensure default-src exists and is permissive
+   csp.entry("default-src".into()).or_insert_with(|| CspDirectiveSources::List(vec![
+     "*".into(), 
+     "'unsafe-inline'".into(), 
+     "'unsafe-eval'".into(), 
+     "data:".into(), 
+     "blob:".into()
+   ]));
+ 
+   csp
 }
 
 // inspired by <https://github.com/rust-lang/rust/blob/1be5c8f90912c446ecbdc405cbc4a89f9acd20fd/library/alloc/src/str.rs#L260-L297>

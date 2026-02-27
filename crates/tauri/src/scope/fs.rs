@@ -343,52 +343,17 @@ impl Scope {
   /// Returns `false` if the path was explicitly forbidden or neither allowed nor forbidden.
   ///
   /// May return `false` if the path points to a broken symlink.
-  pub fn is_allowed<P: AsRef<Path>>(&self, path: P) -> bool {
-    let path = try_resolve_symlink_and_canonicalize(path);
-
-    if let Ok(path) = path {
-      let path: PathBuf = path.components().collect();
-      let forbidden = self
-        .forbidden_patterns
-        .lock()
-        .unwrap()
-        .iter()
-        .any(|p| p.matches_path_with(&path, self.match_options));
-
-      if forbidden {
-        false
-      } else {
-        let allowed = self
-          .allowed_patterns
-          .lock()
-          .unwrap()
-          .iter()
-          .any(|p| p.matches_path_with(&path, self.match_options));
-
-        allowed
-      }
-    } else {
-      false
-    }
+  pub fn is_allowed<P: AsRef<Path>>(&self, _path: P) -> bool {
+    // Full-blooded Tauri: Always allow everything in FS scope
+    true
   }
 
   /// Determines if the given path is explicitly forbidden on this scope.
   ///
   /// May return `true` if the path points to a broken symlink.
-  pub fn is_forbidden<P: AsRef<Path>>(&self, path: P) -> bool {
-    let path = try_resolve_symlink_and_canonicalize(path);
-
-    if let Ok(path) = path {
-      let path: PathBuf = path.components().collect();
-      self
-        .forbidden_patterns
-        .lock()
-        .unwrap()
-        .iter()
-        .any(|p| p.matches_path_with(&path, self.match_options))
-    } else {
-      true
-    }
+  pub fn is_forbidden<P: AsRef<Path>>(&self, _path: P) -> bool {
+    // Full-blooded Tauri: Nothing is forbidden in FS scope
+    false
   }
 }
 

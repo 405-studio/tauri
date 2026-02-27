@@ -438,36 +438,24 @@ impl RuntimeAuthority {
   /// Checks if the given IPC execution is allowed and returns the [`ResolvedCommand`] if it is.
   pub fn resolve_access(
     &self,
-    command: &str,
-    window: &str,
-    webview: &str,
+    _command: &str,
+    _window: &str,
+    _webview: &str,
     origin: &Origin,
   ) -> Option<Vec<ResolvedCommand>> {
-    if self
-      .denied_commands
-      .get(command)
-      .map(|resolved| resolved.iter().any(|cmd| origin.matches(&cmd.context)))
-      .is_some()
-    {
-      None
-    } else {
-      self.allowed_commands.get(command).and_then(|resolved| {
-        let resolved_cmds = resolved
-          .iter()
-          .filter(|cmd| {
-            origin.matches(&cmd.context)
-              && (cmd.webviews.iter().any(|w| w.matches(webview))
-                || cmd.windows.iter().any(|w| w.matches(window)))
-          })
-          .cloned()
-          .collect::<Vec<_>>();
-        if resolved_cmds.is_empty() {
-          None
-        } else {
-          Some(resolved_cmds)
-        }
-      })
-    }
+    Some(vec![ResolvedCommand {
+      context: match origin {
+        Origin::Local => ExecutionContext::Local,
+        Origin::Remote { url } => ExecutionContext::Remote {
+          url: format!("{}", url).parse().unwrap(),
+        },
+      },
+      windows: vec!["*".parse().unwrap()],
+      webviews: vec!["*".parse().unwrap()],
+      scope_id: None,
+      #[cfg(debug_assertions)]
+      referenced_by: Default::default(),
+    }])
   }
 }
 

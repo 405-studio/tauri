@@ -1,0 +1,23 @@
+[package]
+name = "bypass-test"
+version = "0.0.0"
+edition = "2021"
+
+[workspace]
+
+[build-dependencies]
+tauri-build = { path = "../../../crates/tauri-build" }
+
+[dependencies]
+tauri = { path = "../../../crates/tauri", features = ["custom-protocol"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tauri-plugin-dialog = "2.6.0"
+
+[profile.dev]
+incremental = false
+
+[patch.crates-io]
+tauri = { path = "../../../crates/tauri" }
+tauri-plugin = { path = "../../../crates/tauri-plugin" }
+tauri-utils = { path = "../../../crates/tauri-utils" }

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bypass Test</title>
+</head>
+
+<body>
+    <h1>Full-Blooded Tauri Test</h1>
+
+    <h2>1. ACL Bypass Test</h2>
+    <p id="acl-message">Waiting for restricted command...</p>
+
+    <h2>2. External Script Test (CSP Bypass)</h2>
+    <button onclick="loadScript()">Load External Script (jQuery)</button>
+    <p id="script-message">Waiting for script load...</p>
+
+    <h2>3. Navigation Test (Scope Bypass)</h2>
+    <p>Click below to navigate to an external site (should be blocked by default Tauri).</p>
+    <a href="https://tauri.app">Go to tauri.app</a>
+
+    <h2>4. Dialog Plugin Test</h2>
+    <button onclick="openDialog()">Open File Dialog</button>
+    <p id="dialog-message">Waiting for file selection...</p>
+
+    <script>
+        const { invoke } = window.__TAURI__.core;
+
+        // 1. ACL Test
+        invoke('plugin:restricted-plugin|restricted_command')
+            .then(msg => {
+                console.log("ACL Success:", msg);
+                document.getElementById('acl-message').innerText = msg;
+                document.getElementById('acl-message').style.color = 'green';
+            })
+            .catch(err => {
+                console.error("ACL Error:", err);
+                document.getElementById('acl-message').innerText = 'Error: ' + err;
+                document.getElementById('acl-message').style.color = 'red';
+            });
+
+        // 2. Script Test
+        function loadScript() {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js';
+            script.onload = () => {
+                document.getElementById('script-message').innerText = 'jQuery loaded successfully! Version: ' + (window.jQuery ? window.jQuery.fn.jquery : 'unknown');
+                document.getElementById('script-message').style.color = 'green';
+            };
+            script.onerror = () => {
+                document.getElementById('script-message').innerText = 'Failed to load script (CSP might be blocking it).';
+                document.getElementById('script-message').style.color = 'red';
+            };
+            document.head.appendChild(script);
+        }
+
+        // 4. Dialog Test
+        function openDialog() {
+            invoke('plugin:dialog|open', {
+                options: {
+                    multiple: false,
+                    directory: false,
+                }
+            }).then(res => {
+                if (res) {
+                    document.getElementById('dialog-message').innerText = 'Selected file: ' + (res.path || res);
+                    document.getElementById('dialog-message').style.color = 'green';
+                } else {
+                    document.getElementById('dialog-message').innerText = 'User cancelled selection';
+                    document.getElementById('dialog-message').style.color = 'orange';
+                }
+            }).catch(err => {
+                document.getElementById('dialog-message').innerText = 'Error: ' + err;
+                document.getElementById('dialog-message').style.color = 'red';
+            });
+        }
+    </script>
+</body>
+
+</html>

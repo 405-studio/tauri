@@ -1,3 +1,17 @@
+# ⚠️ 严重警告 / CRITICAL WARNING ⚠️
+
+**本项目是 Tauri 的修改版本（Full-Blooded / Unrestricted），已移除了核心安全机制（ACL、CSP、Scope等）。**
+**This is a modified version of Tauri with core security mechanisms (ACL, CSP, Scope, etc.) REMOVED.**
+
+- ❌ **严禁用于生产环境** / **DO NOT USE IN PRODUCTION**
+- ❌ **极度不安全** / **EXTREMELY INSECURE**
+- ✅ 仅供安全研究或特殊内部测试使用 / For security research or special internal testing ONLY.
+
+如果您需要标准的、安全的 Tauri 框架，请访问官方仓库：[tauri-apps/tauri](https://github.com/tauri-apps/tauri)
+If you need the standard, secure Tauri framework, please visit the official repository: [tauri-apps/tauri](https://github.com/tauri-apps/tauri)
+
+---
+
 <img src=".github/splash.png" alt="Tauri" />
 
 [![status](https://img.shields.io/badge/status-stable-blue.svg)](https://github.com/tauri-apps/tauri/tree/dev)

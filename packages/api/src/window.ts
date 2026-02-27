@@ -462,6 +462,24 @@ class Window {
   }
 
   /**
+   * Evaluates JavaScript in the webview.
+   * @example
+   * ```typescript
+   * import { getCurrentWindow } from '@tauri-apps/api/window';
+   * await getCurrentWindow().eval('console.log("Hello World")');
+   * ```
+   *
+   * @param script The JavaScript code to evaluate.
+   * @returns A promise indicating the success or failure of the operation.
+   */
+  async eval(script: string): Promise<void> {
+    return invoke('plugin:webview|eval', {
+      label: this.label,
+      js: script
+    })
+  }
+
+  /**
    * Emits an event to all {@link EventTarget|targets} matching the given target.
    *
    * @example

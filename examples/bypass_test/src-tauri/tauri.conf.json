@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "identifier": "com.tauri.bypass",
   "build": {
-    "frontendDist": ["../index.html"]
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../dist"
   },
   "app": {
     "withGlobalTauri": true,

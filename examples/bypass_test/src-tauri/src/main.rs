@@ -7,9 +7,14 @@ fn restricted_command() -> String {
     "Success! ACL bypassed.".to_string()
 }
 
+#[tauri::command]
+fn log_from_injected(msg: String) {
+    println!("Message from injected JS: {}", msg);
+}
+
 pub fn init_plugin<R: Runtime>() -> TauriPlugin<R> {
     Builder::new("restricted-plugin")
-        .invoke_handler(tauri::generate_handler![restricted_command])
+        .invoke_handler(tauri::generate_handler![restricted_command, log_from_injected])
         .build()
 }
 

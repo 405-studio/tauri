@@ -176,6 +176,16 @@ mod desktop_commands {
     Ok(())
   }
 
+  #[command(root = "crate")]
+  pub async fn eval<R: Runtime>(
+    webview: crate::Webview<R>,
+    label: Option<String>,
+    js: String,
+  ) -> crate::Result<()> {
+    get_webview(webview, label)?.eval(js)?;
+    Ok(())
+  }
+
   #[cfg(any(debug_assertions, feature = "devtools"))]
   #[command(root = "crate")]
   pub async fn internal_toggle_devtools<R: Runtime>(
@@ -250,6 +260,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
         desktop_commands::webview_show,
         desktop_commands::print,
         desktop_commands::reparent,
+        desktop_commands::eval,
         desktop_commands::clear_all_browsing_data,
         #[cfg(any(debug_assertions, feature = "devtools"))]
         desktop_commands::internal_toggle_devtools,
